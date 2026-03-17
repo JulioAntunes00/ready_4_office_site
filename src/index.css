@@ -1,0 +1,28 @@
+﻿:root {
+  --primary: #e11d48;
+  --primary-hover: #be123c;
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --surface-2: #f1f5f9;
+  --text: #0f172a;
+  --text-secondary: #64748b;
+  --border: #e2e8f0;
+  --pill-bg: #ffffff;
+  --pill-text: #0f172a;
+  --nav-bg: rgba(255, 255, 255, 0.8);
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+[data-theme='dark'] {
+  --bg: #020617;
+  --surface: #0f172a;
+  --surface-2: #1e293b;
+  --text: #f8fafc;
+  --text-secondary: #94a3b8;
+  --border: #1e293b;
+  --pill-bg: #1e293b;
+  --pill-text: #f8fafc;
+  --nav-bg: rgba(2, 6, 23, 0.8);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+body { background-color: var(--bg); color: var(--text); }
+.container { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; }
