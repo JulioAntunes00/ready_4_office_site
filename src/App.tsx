@@ -1,16 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
-import { 
+import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor, TouchSensor, MouseSensor, useSensor, useSensors, DragOverlay
 } from '@dnd-kit/core';
-import { 
-  arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, rectSortingStrategy 
+import {
+  arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, rectSortingStrategy
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { 
-  Trash2, Type, Pencil, Download, Image as ImageIcon, FileText, Settings, Sparkles, 
-  Wand2, Shield, Lock, Zap, ArrowRight, Layers, Layout, ChevronLeft, UploadCloud, 
-  Save, Loader2, MousePointer2, Undo, ZoomIn, ZoomOut, Hand, AlertCircle, X, Plus, 
-  FileEdit, Moon, Sun, Menu 
+import {
+  Trash2, Type, Pencil, Download, Image as ImageIcon, FileText, Settings, Sparkles,
+  Wand2, Shield, Lock, Zap, ArrowRight, Layers, Layout, ChevronLeft, UploadCloud,
+  Save, Loader2, MousePointer2, Undo, ZoomIn, ZoomOut, Hand, AlertCircle, X, Plus,
+  FileEdit, Moon, Sun, Menu
 } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
 import { PDFDocument } from 'pdf-lib';
@@ -160,11 +160,11 @@ function EditorPDFPage({ onBack }: { onBack: () => void }) {
   const [activeColor, setActiveColor] = useState('#0f172a'); // Padrão agora é preto
   const [isExporting, setIsExporting] = useState(false);
   const [baseSize, setBaseSize] = useState({ width: 0, height: 0 });
-  
+
   // Anotações e interação
   const [annotations, setAnnotations] = useState<any[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [currentPath, setCurrentPath] = useState<{x: number, y: number}[]>([]);
+  const [currentPath, setCurrentPath] = useState<{ x: number, y: number }[]>([]);
   const [editingTextId, setEditingTextId] = useState<string | null>(null);
   const [draggingTextId, setDraggingTextId] = useState<string | null>(null);
 
@@ -178,8 +178,8 @@ function EditorPDFPage({ onBack }: { onBack: () => void }) {
     if (acceptedFiles.length > 0) setFile(acceptedFiles[0]);
   };
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ 
-    onDrop, accept: { 'application/pdf': ['.pdf'] }, maxFiles: 1 
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop, accept: { 'application/pdf': ['.pdf'] }, maxFiles: 1
   });
 
   useEffect(() => {
@@ -206,19 +206,19 @@ function EditorPDFPage({ onBack }: { onBack: () => void }) {
     const renderPage = async () => {
       try {
         const page = await pdfDoc.getPage(currentPage);
-        
+
         const dpr = window.devicePixelRatio || 1;
         const baseViewport = page.getViewport({ scale: 1 });
         setBaseSize({ width: baseViewport.width, height: baseViewport.height });
-        
+
         // Render quality maxes at 3 to avoid mobile Safari crashes on memory limits
         const renderScale = Math.min(zoom * dpr, 3);
         const renderViewport = page.getViewport({ scale: renderScale });
-        
+
         const canvas = canvasRef.current!;
         const context = canvas.getContext('2d');
         if (!context) return;
-        
+
         canvas.width = renderViewport.width;
         canvas.height = renderViewport.height;
         canvas.style.width = `${baseViewport.width}px`;
@@ -239,7 +239,7 @@ function EditorPDFPage({ onBack }: { onBack: () => void }) {
     try {
       const arrayBuffer = await file!.arrayBuffer();
       const pdf = await PDFDocument.load(arrayBuffer);
-      
+
       // We embed a standard font for text
       const helveticaFont = await pdf.embedFont('Helvetica');
       const pages = pdf.getPages();
@@ -303,9 +303,9 @@ function EditorPDFPage({ onBack }: { onBack: () => void }) {
       const pdfBytes = await pdf.save();
       const blob = new Blob([pdfBytes as any], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a'); 
-      a.href = url; 
-      a.download = `Ready4Office_editado_${file!.name}`; 
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Ready4Office_editado_${file!.name}`;
       a.click();
     } catch (e) {
       console.error("Erro ao exportar", e);
@@ -341,7 +341,7 @@ function EditorPDFPage({ onBack }: { onBack: () => void }) {
         if (wrapper) {
           setIsPanning(true);
           setPanStart({ x: e.clientX, y: e.clientY, scrollLeft: wrapper.scrollLeft, scrollTop: wrapper.scrollTop });
-          try { (e.target as HTMLDivElement).setPointerCapture(e.pointerId); } catch (e) {}
+          try { (e.target as HTMLDivElement).setPointerCapture(e.pointerId); } catch (e) { }
         }
       }
       return;
@@ -387,7 +387,7 @@ function EditorPDFPage({ onBack }: { onBack: () => void }) {
   const onPointerUp = (e?: React.PointerEvent<HTMLDivElement>) => {
     if (isPanning) {
       setIsPanning(false);
-      if (e) try { (e.target as HTMLDivElement).releasePointerCapture(e.pointerId); } catch {}
+      if (e) try { (e.target as HTMLDivElement).releasePointerCapture(e.pointerId); } catch { }
       return;
     }
 
@@ -411,7 +411,7 @@ function EditorPDFPage({ onBack }: { onBack: () => void }) {
       setCurrentPath([]);
     }
   };
-  
+
   const onUndo = () => {
     setAnnotations(prev => prev.slice(0, -1));
   };
@@ -436,38 +436,38 @@ function EditorPDFPage({ onBack }: { onBack: () => void }) {
             </div>
           </>
         )}
-        
+
         {file && (
           <div className="editor-layout">
             <div className="editor-top-bar">
               <div className="etb-left">
-                <button onClick={() => setFile(null)} className="icon-btn-toggle" title="Trocar arquivo"><ChevronLeft size={20}/></button>
+                <button onClick={() => setFile(null)} className="icon-btn-toggle" title="Trocar arquivo"><ChevronLeft size={20} /></button>
                 <div className="file-name-pill hide-mobile">{file.name}</div>
               </div>
               <div className="etb-right">
                 <button className="primary-action-btn small-btn" onClick={handleExport} disabled={isExporting}>
-                  {isExporting ? <Loader2 className="animate-spin" size={16}/> : <Save size={16}/>}
+                  {isExporting ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
                   <span className="hide-mobile">Salvar PDF</span>
                 </button>
               </div>
             </div>
-            
+
             <div className="editor-main-area">
               <div className="editor-island-toolbar">
                 <div className="toolbar-section">
-                  <button className={`tool-btn ${activeTool === 'hand' ? 'active' : ''}`} onClick={() => setActiveTool('hand')} title="Mover Folha"><Hand size={18}/><span className="tool-label">Mover</span></button>
-                  <button className={`tool-btn ${activeTool === 'cursor' ? 'active' : ''}`} onClick={() => setActiveTool('cursor')} title="Seleção"><MousePointer2 size={18}/><span className="tool-label">Seleção</span></button>
-                  <button className={`tool-btn ${activeTool === 'text' ? 'active' : ''}`} onClick={() => setActiveTool('text')} title="Inserir Texto"><Type size={18}/><span className="tool-label">Texto</span></button>
-                  <button className={`tool-btn ${activeTool === 'pencil' ? 'active' : ''}`} onClick={() => setActiveTool('pencil')} title="Lápis / Assinatura"><Pencil size={18}/><span className="tool-label">Lápis</span></button>
+                  <button className={`tool-btn ${activeTool === 'hand' ? 'active' : ''}`} onClick={() => setActiveTool('hand')} title="Mover Folha"><Hand size={18} /><span className="tool-label">Mover</span></button>
+                  <button className={`tool-btn ${activeTool === 'cursor' ? 'active' : ''}`} onClick={() => setActiveTool('cursor')} title="Seleção"><MousePointer2 size={18} /><span className="tool-label">Seleção</span></button>
+                  <button className={`tool-btn ${activeTool === 'text' ? 'active' : ''}`} onClick={() => setActiveTool('text')} title="Inserir Texto"><Type size={18} /><span className="tool-label">Texto</span></button>
+                  <button className={`tool-btn ${activeTool === 'pencil' ? 'active' : ''}`} onClick={() => setActiveTool('pencil')} title="Lápis / Assinatura"><Pencil size={18} /><span className="tool-label">Lápis</span></button>
                 </div>
                 {(activeTool === 'text' || activeTool === 'pencil' || editingTextId || draggingTextId) && (
                   <div className="toolbar-section color-section">
                     <span className="toolbar-label">Cor:</span>
                     {['#e11d48', '#2563eb', '#16a34a', '#0f172a', '#f59e0b'].map(color => (
-                      <button 
-                        key={color} 
-                        className={`color-btn ${activeColor === color ? 'active' : ''}`} 
-                        style={{ backgroundColor: color }} 
+                      <button
+                        key={color}
+                        className={`color-btn ${activeColor === color ? 'active' : ''}`}
+                        style={{ backgroundColor: color }}
                         onPointerDown={(e) => e.preventDefault()}
                         onClick={() => {
                           setActiveColor(color);
@@ -477,45 +477,45 @@ function EditorPDFPage({ onBack }: { onBack: () => void }) {
                           if (draggingTextId) {
                             setAnnotations(prev => prev.map(a => a.id === draggingTextId ? { ...a, color } : a));
                           }
-                        }} 
+                        }}
                       />
                     ))}
                   </div>
                 )}
-                
+
                 <div className="toolbar-section" style={{ marginLeft: 'auto' }}>
-                  <button className="icon-btn-toggle" onClick={() => setZoom(z => Math.max(0.5, z - 0.2))}><ZoomOut size={16}/></button>
+                  <button className="icon-btn-toggle" onClick={() => setZoom(z => Math.max(0.5, z - 0.2))}><ZoomOut size={16} /></button>
                   <span className="zoom-label">{Math.round(zoom * 100)}%</span>
-                  <button className="icon-btn-toggle" onClick={() => setZoom(z => Math.min(3, z + 0.2))}><ZoomIn size={16}/></button>
+                  <button className="icon-btn-toggle" onClick={() => setZoom(z => Math.min(3, z + 0.2))}><ZoomIn size={16} /></button>
                 </div>
-                
+
                 <div className="toolbar-section">
-                  <button className="tool-btn" title="Desfazer" onClick={onUndo} disabled={annotations.length === 0}><Undo size={18}/><span className="tool-label">Desfazer</span></button>
+                  <button className="tool-btn" title="Desfazer" onClick={onUndo} disabled={annotations.length === 0}><Undo size={18} /><span className="tool-label">Desfazer</span></button>
                 </div>
               </div>
 
               <div className="editor-canvas-wrapper" ref={scrollWrapperRef}>
                 <div className="page-controls-float">
-                  <button disabled={currentPage <= 1} onClick={() => setCurrentPage(p => p - 1)} className="icon-btn-toggle shadow-sm"><ChevronLeft size={20}/></button>
+                  <button disabled={currentPage <= 1} onClick={() => setCurrentPage(p => p - 1)} className="icon-btn-toggle shadow-sm"><ChevronLeft size={20} /></button>
                   <span className="page-indicator">{currentPage} / {totalPages || '-'}</span>
-                  <button disabled={currentPage >= totalPages} onClick={() => setCurrentPage(p => p + 1)} className="icon-btn-toggle shadow-sm" style={{ transform: 'rotate(180deg)' }}><ChevronLeft size={20}/></button>
+                  <button disabled={currentPage >= totalPages} onClick={() => setCurrentPage(p => p + 1)} className="icon-btn-toggle shadow-sm" style={{ transform: 'rotate(180deg)' }}><ChevronLeft size={20} /></button>
                 </div>
-                
-                <div 
+
+                <div
                   className="canvas-zoom-container"
-                  style={{ 
-                    width: pdfDoc ? baseSize.width * zoom : '100%', 
+                  style={{
+                    width: pdfDoc ? baseSize.width * zoom : '100%',
                     height: pdfDoc ? baseSize.height * zoom + 100 : 'auto', // +100 to ensure bottom shadow visibility
                     position: 'relative',
                     transition: '0.3s',
                     margin: '0 auto'
                   }}
                 >
-                  <div 
-                    className="canvas-frame" 
+                  <div
+                    className="canvas-frame"
                     ref={containerRef}
-                    style={{ 
-                      transform: `scale(${zoom})`, 
+                    style={{
+                      transform: `scale(${zoom})`,
                       transformOrigin: 'top left',
                       width: pdfDoc ? baseSize.width : 'auto',
                       height: pdfDoc ? baseSize.height : 'auto'
@@ -528,16 +528,16 @@ function EditorPDFPage({ onBack }: { onBack: () => void }) {
                       </div>
                     )}
                     <canvas ref={canvasRef} className="pdf-render-canvas" />
-                    
+
                     {pdfDoc && (
-                      <div 
+                      <div
                         className="interactive-layer"
                         onPointerDown={onPointerDown}
                         onPointerMove={onPointerMove}
                         onPointerUp={onPointerUp}
                         onPointerLeave={onPointerUp}
                         onClick={onClickLayer}
-                        style={{ 
+                        style={{
                           cursor: activeTool === 'text' ? 'text' : activeTool === 'pencil' ? 'crosshair' : activeTool === 'hand' ? (isPanning ? 'grabbing' : 'grab') : 'default',
                           touchAction: activeTool === 'pencil' ? 'none' : 'pan-x pan-y'
                         }}
@@ -545,14 +545,14 @@ function EditorPDFPage({ onBack }: { onBack: () => void }) {
                         {/* SVGs dos desenhos */}
                         <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
                           {annotations.filter(a => a.page === currentPage && a.type === 'draw').map(a => (
-                            <polyline 
+                            <polyline
                               key={a.id}
                               points={a.path.map((p: any) => `${p.x},${p.y}`).join(' ')}
                               fill="none" stroke={a.color} strokeWidth={a.strokeWidth} strokeLinecap="round" strokeLinejoin="round"
                             />
                           ))}
                           {isDrawing && currentPath.length > 0 && (
-                            <polyline 
+                            <polyline
                               points={currentPath.map(p => `${p.x},${p.y}`).join(' ')}
                               fill="none" stroke={activeColor} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"
                             />
@@ -561,8 +561,8 @@ function EditorPDFPage({ onBack }: { onBack: () => void }) {
 
                         {/* Textos */}
                         {annotations.filter(a => a.page === currentPage && a.type === 'text').map(a => (
-                          <div 
-                            key={a.id} 
+                          <div
+                            key={a.id}
                             style={{ position: 'absolute', left: a.x, top: a.y, transform: 'translateY(-50%)', pointerEvents: 'auto' }}
                             onPointerDown={(e) => {
                               if (activeTool === 'cursor' && editingTextId !== a.id) {
@@ -586,7 +586,7 @@ function EditorPDFPage({ onBack }: { onBack: () => void }) {
                             }}
                           >
                             {editingTextId === a.id ? (
-                              <input 
+                              <input
                                 autoFocus
                                 type="text"
                                 value={a.content}
@@ -596,7 +596,7 @@ function EditorPDFPage({ onBack }: { onBack: () => void }) {
                                   if (!a.content.trim()) setAnnotations(prev => prev.filter(ann => ann.id !== a.id));
                                 }}
                                 onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); setEditingTextId(null); } }}
-                                style={{ 
+                                style={{
                                   color: a.color, fontSize: `${a.fontSize}px`, background: 'rgba(255,255,250,0.85)',
                                   border: `2px solid ${a.color}`, outline: 'none', padding: '4px 6px',
                                   borderRadius: '4px', minWidth: '120px', fontFamily: 'Helvetica, sans-serif',
@@ -604,18 +604,18 @@ function EditorPDFPage({ onBack }: { onBack: () => void }) {
                                 }}
                               />
                             ) : (
-                              <div 
-                                onClick={(e) => { 
+                              <div
+                                onClick={(e) => {
                                   if (!draggingTextId && activeTool === 'cursor') {
-                                    e.stopPropagation(); 
-                                    setEditingTextId(a.id); 
+                                    e.stopPropagation();
+                                    setEditingTextId(a.id);
                                     setActiveColor(a.color); // Sync the color picker
                                   }
                                 }}
-                                style={{ 
+                                style={{
                                   touchAction: activeTool === 'cursor' ? 'none' : 'auto',
-                                  color: a.color, fontSize: `${a.fontSize}px`, 
-                                  cursor: activeTool === 'cursor' ? (draggingTextId === a.id ? 'grabbing' : 'grab') : 'inherit', 
+                                  color: a.color, fontSize: `${a.fontSize}px`,
+                                  cursor: activeTool === 'cursor' ? (draggingTextId === a.id ? 'grabbing' : 'grab') : 'inherit',
                                   padding: '2px 4px', whiteSpace: 'nowrap', fontFamily: 'Helvetica, sans-serif',
                                   background: 'transparent', borderRadius: '4px',
                                   border: (activeTool === 'cursor' && !draggingTextId) ? '1px dashed transparent' : 'none',
@@ -661,12 +661,14 @@ function ModelosOnlinePage() {
 function HomePage({ onSelectTool }: { onSelectTool: (tool: string) => void }) {
   return (
     <div className="home-hero-section">
-      <div className="container">
+      <div className="container" style={{ position: 'relative', zIndex: 2 }}>
         <div className="hero-text fade-in">
-          <h1 className="hero-mobile-title">Pronto para o seu escritório</h1>
-          <p>Ferramentas PDF rápidas, seguras e 100% privadas no seu navegador.</p>
+          <div className="hero-badge"><Shield size={14} style={{ color: 'var(--primary)' }} /> 100% Gratuito e Privado</div>
+          <h1 className="hero-desktop-title hide-mobile">Ready<span className="brand-4">4</span>Office</h1>
+          <h1 className="hero-mobile-title show-mobile">Ready<span className="brand-4">4</span>Office</h1>
+          <p className="hero-subtitle">Ferramentas PDF ultrarrápidas no seu navegador. <strong style={{ color: 'var(--text)' }}>Privacidade que os gigantes não oferecem: </strong>Seus dados nunca saem do seu computador.</p>
         </div>
-        <div className="premium-grid">
+        <div className="premium-grid" style={{ marginTop: '2rem' }}>
           <div className="premium-card highlight" onClick={() => onSelectTool('combinar')}>
             <div className="card-tag">Destaque</div>
             <div className="p-card-icon combiner"><Layers size={32} /></div>
@@ -702,10 +704,11 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <nav className="navbar">
+      <div className="global-grid-bg"></div>
+      <nav className="navbar fade-in">
         <div className="container nav-wrapper">
           <div className="nav-left" onClick={() => { setActiveTab('ferramentas'); setCurrentTool(null); }}>
-            <span className="logo-text">Ready4Office<span className="logo-dot">.</span></span>
+            <span className="logo-text">Ready<span className="brand-4" style={{ fontSize: '1.4rem' }}>4</span>Office<span className="logo-dot">.</span></span>
           </div>
           <div className="nav-center hide-mobile">
             <div className="pill-group">
@@ -714,8 +717,8 @@ export default function App() {
             </div>
           </div>
           <div className="nav-right">
-            <button 
-              className={`theme-toggle-switch ${darkMode ? 'dark' : 'light'}`} 
+            <button
+              className={`theme-toggle-switch ${darkMode ? 'dark' : 'light'}`}
               onClick={() => setDarkMode(!darkMode)}
               title="Alternar tema"
               aria-label="Alternar tema"
@@ -733,13 +736,13 @@ export default function App() {
           <>
             <div className="mobile-menu-overlay fade-in" onClick={() => setMenuOpen(false)}></div>
             <div className="mobile-menu slide-down">
-              <button 
+              <button
                 className={activeTab === 'ferramentas' ? 'active' : ''}
                 onClick={() => { setActiveTab('ferramentas'); setCurrentTool(null); setMenuOpen(false); }}
               >
                 Ferramentas
               </button>
-              <button 
+              <button
                 className={activeTab === 'modelos' ? 'active' : ''}
                 onClick={() => { setActiveTab('modelos'); setCurrentTool(null); setMenuOpen(false); }}
               >
@@ -751,9 +754,9 @@ export default function App() {
       </nav>
       <main className="content">
         {activeTab === 'ferramentas' ? (
-          currentTool === 'combinar' ? <CombinarPDFPage onBack={() => setCurrentTool(null)} /> : 
-          currentTool === 'editor' ? <EditorPDFPage onBack={() => setCurrentTool(null)} /> : 
-          <HomePage onSelectTool={setCurrentTool} />
+          currentTool === 'combinar' ? <CombinarPDFPage onBack={() => setCurrentTool(null)} /> :
+            currentTool === 'editor' ? <EditorPDFPage onBack={() => setCurrentTool(null)} /> :
+              <HomePage onSelectTool={setCurrentTool} />
         ) : <ModelosOnlinePage />}
       </main>
       <footer className="premium-footer"><div className="container"><p>© 2026 Ready4Office Tools</p></div></footer>
