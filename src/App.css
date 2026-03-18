@@ -48,6 +48,10 @@ body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
 .editor-workspace { background-color: var(--surface); border: 1px solid var(--border); padding: 1.5rem; border-radius: 20px; margin-bottom: 2rem; }
 .workspace-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
 .count-number { color: var(--primary); font-weight: 800; }
+.clear-all-btn { display: flex; align-items: center; gap: 0.4rem; background: transparent; color: #ef4444; border: 1px solid #fca5a5; padding: 0.4rem 0.8rem; border-radius: 100px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: 0.2s; }
+.clear-all-btn:hover { background: #fef2f2; }
+[data-theme='dark'] .clear-all-btn { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.2); }
+[data-theme='dark'] .clear-all-btn:hover { background: rgba(239, 68, 68, 0.2); }
 
 /* ======== PDF EDITOR LAYOUT ======== */
 .editor-layout { display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; height: calc(100vh - 120px); min-height: 600px; box-shadow: 0 10px 40px rgba(0,0,0,0.05); }
@@ -97,7 +101,7 @@ body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
 .premium-preview-card { 
   width: 100%; 
   min-width: 140px;
-  height: 210px; /* ALTURA FIXA PARA NÃO APLATAR */
+  height: 230px; /* ALTURA FIXA PARA NÃO APLATAR */
   background-color: var(--surface); 
   border-radius: 12px; 
   display: flex; 
@@ -107,14 +111,14 @@ body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
-.preview-frame { flex: 1; position: relative; background-color: #f8fafc; overflow: hidden; height: 170px; }
+.preview-frame { flex: 1; position: relative; background-color: #f8fafc; overflow: hidden; height: 180px; }
 .pdf-page-render { width: 100%; height: 100%; object-fit: cover; }
 .page-number-badge { position: absolute; top: 6px; left: 6px; background-color: var(--text); color: var(--bg); width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 800; z-index: 10; }
 .delete-page-btn { position: absolute; top: 6px; right: 6px; background: white; color: #ef4444; border: none; width: 22px; height: 22px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-.card-footer-label { height: 35px; padding: 0 8px; display: flex; align-items: center; background: var(--surface); border-top: 1px solid var(--border); }
-.file-label-text { font-size: 0.6rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--text-secondary); }
+.card-footer-label { height: 50px; padding: 0 12px; display: flex; align-items: center; justify-content: flex-start; background: var(--surface); border-top: 1px solid var(--border); }
+.file-label-text { font-size: 0.9rem; font-weight: 700; color: var(--text-secondary); display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 1.2; word-break: break-word; }
 
-.add-more-pill-card { height: 210px; border: 2px dashed var(--border); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; color: var(--text-secondary); cursor: pointer; }
+.add-more-pill-card { height: 230px; border: 2px dashed var(--border); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5rem; color: var(--text-secondary); cursor: pointer; }
 
 .premium-dropzone { background-color: var(--surface); border: 2px dashed var(--border); border-radius: 24px; padding: 3rem 1rem; text-align: center; cursor: pointer; }
 .upload-icon-circle { width: 50px; height: 50px; background-color: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; }
@@ -157,9 +161,9 @@ body { background-color: var(--bg); color: var(--text); overflow-x: hidden; }
 @media (max-width: 480px) {
   .hero-mobile-title { font-size: 1.75rem; letter-spacing: -0.5px; }
   .premium-card { padding: 1.5rem; }
-  .premium-file-grid { grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
-  .premium-preview-card, .add-more-pill-card { min-width: auto; height: 180px; }
-  .preview-frame { height: 140px; }
+  .premium-file-grid { grid-template-columns: 1fr; gap: 0.75rem; }
+  .premium-preview-card, .add-more-pill-card { min-width: auto; height: 260px; }
+  .preview-frame { height: 210px; }
   .action-bar-floating { width: 92%; }
 }
 

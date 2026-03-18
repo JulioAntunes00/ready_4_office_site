@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { 
-  DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragOverlay
+  DndContext, closestCenter, KeyboardSensor, PointerSensor, TouchSensor, MouseSensor, useSensor, useSensors, DragOverlay
 } from '@dnd-kit/core';
 import { 
   arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, rectSortingStrategy 
@@ -57,7 +57,7 @@ function FileCard({ fileItem, isDragging, onRemove, listeners, attributes, index
 
 function SortableFileItem({ id, fileItem, onRemove, index }: any) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
-  const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.3 : 1 };
+  const style: React.CSSProperties = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.3 : 1, touchAction: 'none' };
   return <div ref={setNodeRef} style={style}><FileCard fileItem={fileItem} onRemove={onRemove} listeners={listeners} attributes={attributes} index={index} /></div>;
 }
 
@@ -65,7 +65,11 @@ function CombinarPDFPage({ onBack }: { onBack: () => void }) {
   const [files, setFiles] = useState<PDFFileItem[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [isMerging, setIsMerging] = useState(false);
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
 
   const generatePreview = async (file: File): Promise<string> => {
     try {
