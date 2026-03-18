@@ -1,14 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import {
-  DndContext, closestCenter, KeyboardSensor, PointerSensor, TouchSensor, MouseSensor, useSensor, useSensors, DragOverlay
+  DndContext, closestCenter, KeyboardSensor, TouchSensor, MouseSensor, useSensor, useSensors, DragOverlay
 } from '@dnd-kit/core';
 import {
   arrayMove, SortableContext, sortableKeyboardCoordinates, useSortable, rectSortingStrategy
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
-  Trash2, Type, Pencil, Download, Image as ImageIcon, FileText, Settings, Sparkles,
-  Wand2, Shield, Lock, Zap, ArrowRight, Layers, Layout, ChevronLeft, UploadCloud,
+  Trash2, Type, Pencil, FileText, Shield,
+  Layers, ChevronLeft, UploadCloud,
   Save, Loader2, MousePointer2, Undo, ZoomIn, ZoomOut, Hand, AlertCircle, X, Plus,
   FileEdit, Moon, Sun, Menu
 } from 'lucide-react';
@@ -23,6 +23,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
 
 import './App.css';
 import './index.css';
+import ModelosPage from './modelos/ModelosPage';
 
 interface PDFFileItem {
   id: string;
@@ -646,17 +647,7 @@ function EditorPDFPage({ onBack }: { onBack: () => void }) {
   );
 }
 
-function ModelosOnlinePage() {
-  return (
-    <div className="tool-container fade-in">
-      <div className="container" style={{ textAlign: 'center', padding: '6rem 0' }}>
-        <div className="upload-icon-circle" style={{ backgroundColor: 'var(--surface-2)', color: 'var(--primary)', marginBottom: '2rem' }}><Sparkles size={32} /></div>
-        <h1 className="hero-mobile-title">Modelos Online</h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem' }}>Em desenvolvimento. Prepare-se para modelos incríveis.</p>
-      </div>
-    </div>
-  );
-}
+// ModelosOnlinePage foi substituída pelo componente ModelosPage importado de ./modelos/ModelosPage
 
 function HomePage({ onSelectTool }: { onSelectTool: (tool: string) => void }) {
   return (
@@ -757,7 +748,7 @@ export default function App() {
           currentTool === 'combinar' ? <CombinarPDFPage onBack={() => setCurrentTool(null)} /> :
             currentTool === 'editor' ? <EditorPDFPage onBack={() => setCurrentTool(null)} /> :
               <HomePage onSelectTool={setCurrentTool} />
-        ) : <ModelosOnlinePage />}
+        ) : <ModelosPage />}
       </main>
       <footer className="premium-footer"><div className="container"><p>© 2026 Ready4Office Tools</p></div></footer>
     </div>
