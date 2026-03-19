@@ -961,6 +961,13 @@
 
 
 /* =============================================
+   MOBILE PREVIEW HANDLE
+   ============================================= */
+.mobile-preview-handle {
+  display: none;
+}
+
+/* =============================================
    MOBILE RESPONSIVE
    ============================================= */
 @media (max-width: 768px) {
@@ -979,22 +986,104 @@
     overflow: visible;
   }
 
+  /* ── Form panel stays sticky at top ── */
   .modelo-editor-panel {
     width: 100%;
     height: auto;
     overflow: visible;
     border-right: none;
-    border-bottom: 1px solid var(--border);
+    border-bottom: none;
+    position: sticky;
+    top: 70px;
+    z-index: 2;
+    background: var(--surface);
   }
 
   .panel-form {
-    overflow: visible;
-    max-height: 60vh;
     overflow-y: auto;
   }
 
+  /* ── Mobile preview handle ── */
+  .mobile-preview-handle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem 0.75rem;
+    background: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
+    border-top: 1px solid var(--border);
+    position: relative;
+    z-index: 3;
+    cursor: grab;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .mobile-preview-handle:active {
+    cursor: grabbing;
+  }
+
+  .preview-handle-bar {
+    width: 48px;
+    height: 5px;
+    border-radius: 100px;
+    background: var(--border);
+    transition: background 0.2s, width 0.2s;
+  }
+
+  .mobile-preview-handle:hover .preview-handle-bar,
+  .mobile-preview-handle:active .preview-handle-bar {
+    background: var(--primary);
+    width: 56px;
+  }
+
+  .preview-handle-dots {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 24px;
+  }
+
+  .preview-handle-dots span {
+    display: block;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--text-secondary);
+    opacity: 0.35;
+  }
+
+  .preview-handle-label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    letter-spacing: 0.3px;
+    opacity: 0.8;
+  }
+
+  .preview-handle-chevron {
+    display: inline-flex;
+    animation: bounceDown 1.5s ease-in-out infinite;
+    font-size: 0.8rem;
+  }
+
+  @keyframes bounceDown {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(3px); }
+  }
+
+  /* ── Preview slides OVER the form ── */
   .modelo-preview-panel {
     padding: 1.5rem 1rem;
+    position: relative;
+    z-index: 3;
+    background: var(--bg);
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.08);
   }
 
   .doc-sheet {

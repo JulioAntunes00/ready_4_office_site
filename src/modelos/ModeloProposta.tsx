@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronLeft, Download, Plus, Trash2, Loader2 } from 'lucide-react';
+import { ChevronLeft, Download, Plus, Trash2, Loader2, Printer } from 'lucide-react';
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
 interface Servico {
@@ -48,6 +48,7 @@ function parseVal(v: string) {
 
 export default function ModeloProposta({ onBack }: { onBack: () => void }) {
   const [isDownloading, setIsDownloading] = useState(false);
+  const [layoutPb, setLayoutPb] = useState(false);
 
   const today = new Date();
   const todayStr = today.toLocaleDateString('pt-BR');
@@ -97,29 +98,40 @@ export default function ModeloProposta({ onBack }: { onBack: () => void }) {
       const bold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
       const regular = await pdfDoc.embedFont(StandardFonts.Helvetica);
 
-      const accentRgb = rgb(acR, acG, acB);
+      const accentRgb = layoutPb ? rgb(0, 0, 0) : rgb(acR, acG, acB);
       const white = rgb(1, 1, 1);
       const dark = rgb(0.07, 0.09, 0.17);
       const gray = rgb(0.28, 0.34, 0.42);
       const lightGray = rgb(0.58, 0.63, 0.71);
 
-      // Header bg
-      page.drawRectangle({ x: 0, y: height - 140, width: 595, height: 140, color: accentRgb });
+      if (layoutPb) {
+        // ── Minimalist B&W header ──
+        page.drawText(p.empresa || 'Sua Empresa', { x: 40, y: height - 50, size: 18, font: bold, color: dark });
+        page.drawText(`Proposta Comercial Nº ${p.numero}`, { x: 40, y: height - 68, size: 10, font: regular, color: gray });
+        page.drawLine({ start: { x: 40, y: height - 78 }, end: { x: 555, y: height - 78 }, thickness: 1, color: dark });
 
-      page.drawText(p.empresa || 'Sua Empresa', { x: 40, y: height - 55, size: 18, font: bold, color: white });
-      page.drawText(`Proposta Comercial Nº ${p.numero}`, { x: 40, y: height - 76, size: 10, font: regular, color: rgb(1, 1, 1) });
+        const metaY = height - 98;
+        page.drawText(`Para: ${p.clienteEmpresa}`, { x: 40, y: metaY, size: 9, font: regular, color: dark });
+        page.drawText(`Validade: ${p.validadeAte}`, { x: 40, y: metaY - 14, size: 9, font: regular, color: gray });
+        page.drawText(`Data: ${p.data}`, { x: 350, y: metaY, size: 9, font: regular, color: dark });
+      } else {
+        // ── Original colored header ──
+        page.drawRectangle({ x: 0, y: height - 140, width: 595, height: 140, color: accentRgb });
+        page.drawText(p.empresa || 'Sua Empresa', { x: 40, y: height - 55, size: 18, font: bold, color: white });
+        page.drawText(`Proposta Comercial Nº ${p.numero}`, { x: 40, y: height - 76, size: 10, font: regular, color: rgb(1, 1, 1) });
 
-      const metaY = height - 110;
-      page.drawText(`Para: ${p.clienteEmpresa}`, { x: 40, y: metaY, size: 9, font: regular, color: white });
-      page.drawText(`Validade: ${p.validadeAte}`, { x: 40, y: metaY - 14, size: 9, font: regular, color: white });
-      page.drawText(`Data: ${p.data}`, { x: 350, y: metaY, size: 9, font: regular, color: white });
+        const metaY = height - 110;
+        page.drawText(`Para: ${p.clienteEmpresa}`, { x: 40, y: metaY, size: 9, font: regular, color: white });
+        page.drawText(`Validade: ${p.validadeAte}`, { x: 40, y: metaY - 14, size: 9, font: regular, color: white });
+        page.drawText(`Data: ${p.data}`, { x: 350, y: metaY, size: 9, font: regular, color: white });
+      }
 
-      let y = height - 170;
+      let y = layoutPb ? height - 140 : height - 170;
 
       const sectionTitle = (title: string) => {
-        page.drawText(title.toUpperCase(), { x: 40, y, size: 7, font: bold, color: lightGray });
+        page.drawText(title.toUpperCase(), { x: 40, y, size: 7, font: bold, color: layoutPb ? gray : lightGray });
         y -= 7;
-        page.drawLine({ start: { x: 40, y }, end: { x: 555, y }, thickness: 0.5, color: rgb(0.85, 0.87, 0.9) });
+        page.drawLine({ start: { x: 40, y }, end: { x: 555, y }, thickness: 0.5, color: layoutPb ? rgb(0.6, 0.6, 0.6) : rgb(0.85, 0.87, 0.9) });
         y -= 16;
       };
 
@@ -135,11 +147,13 @@ export default function ModeloProposta({ onBack }: { onBack: () => void }) {
       // Services
       sectionTitle('Serviços Propostos');
       // Table header
-      page.drawRectangle({ x: 40, y: y - 2, width: 515, height: 20, color: rgb(0.95, 0.96, 0.98) });
-      page.drawText('DESCRIÇÃO', { x: 45, y: y + 3, size: 7, font: bold, color: lightGray });
-      page.drawText('QTD', { x: 380, y: y + 3, size: 7, font: bold, color: lightGray });
-      page.drawText('VALOR UNIT.', { x: 420, y: y + 3, size: 7, font: bold, color: lightGray });
-      page.drawText('TOTAL', { x: 515, y: y + 3, size: 7, font: bold, color: lightGray });
+      if (!layoutPb) {
+        page.drawRectangle({ x: 40, y: y - 2, width: 515, height: 20, color: rgb(0.95, 0.96, 0.98) });
+      }
+      page.drawText('DESCRIÇÃO', { x: 45, y: y + 3, size: 7, font: bold, color: layoutPb ? gray : lightGray });
+      page.drawText('QTD', { x: 380, y: y + 3, size: 7, font: bold, color: layoutPb ? gray : lightGray });
+      page.drawText('VALOR UNIT.', { x: 420, y: y + 3, size: 7, font: bold, color: layoutPb ? gray : lightGray });
+      page.drawText('TOTAL', { x: 515, y: y + 3, size: 7, font: bold, color: layoutPb ? gray : lightGray });
       y -= 20;
 
       p.servicos.forEach(s => {
@@ -155,7 +169,7 @@ export default function ModeloProposta({ onBack }: { onBack: () => void }) {
       // Total
       y -= 5;
       page.drawText('TOTAL GERAL', { x: 380, y, size: 9, font: bold, color: dark });
-      page.drawText(totalStr, { x: 500, y, size: 12, font: bold, color: accentRgb });
+      page.drawText(totalStr, { x: 500, y, size: 12, font: bold, color: layoutPb ? dark : accentRgb });
       y -= 25;
 
       // Payment
@@ -205,6 +219,19 @@ export default function ModeloProposta({ onBack }: { onBack: () => void }) {
           </button>
         </div>
         <div className="panel-form">
+          {/* Layout P&B Toggle */}
+          <div className="form-section-title" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><Printer size={12} /> Modo de Impressão</div>
+          <div className="layout-picker" style={{ gridTemplateColumns: '1fr 1fr' }}>
+            <button className={`layout-option ${!layoutPb ? 'selected' : ''}`} style={!layoutPb ? { borderColor: p.acento, color: p.acento, background: `${p.acento}10` } : {}} onClick={() => setLayoutPb(false)}>
+              <span className="layout-name">Colorido</span>
+              <span className="layout-desc">Header com cor</span>
+            </button>
+            <button className={`layout-option ${layoutPb ? 'selected' : ''}`} style={layoutPb ? { borderColor: '#0f172a', color: '#0f172a', background: '#f1f5f9' } : {}} onClick={() => setLayoutPb(true)}>
+              <span className="layout-name">Preto & Branco</span>
+              <span className="layout-desc">Econômico p/ impressão</span>
+            </button>
+          </div>
+
           <div className="form-section-title">Sua Empresa</div>
           <div className="form-field"><label>Nome da Empresa</label><input value={p.empresa} onChange={e => up('empresa', e.target.value)} /></div>
           <div className="form-row">
@@ -227,12 +254,16 @@ export default function ModeloProposta({ onBack }: { onBack: () => void }) {
           <div className="form-field"><label>Validade até</label><input value={p.validadeAte} onChange={e => up('validadeAte', e.target.value)} /></div>
           <div className="form-field"><label>Texto de Apresentação</label><textarea rows={4} value={p.intro} onChange={e => up('intro', e.target.value)} /></div>
 
-          <div className="form-section-title">Cor de Destaque</div>
-          <div className="color-row">
-            {ACCENT_COLORS.map(c => (
-              <button key={c} className={`color-swatch ${p.acento === c ? 'selected' : ''}`} style={{ backgroundColor: c }} onClick={() => up('acento', c)} />
-            ))}
-          </div>
+          {!layoutPb && (
+            <>
+              <div className="form-section-title">Cor de Destaque</div>
+              <div className="color-row">
+                {ACCENT_COLORS.map(c => (
+                  <button key={c} className={`color-swatch ${p.acento === c ? 'selected' : ''}`} style={{ backgroundColor: c }} onClick={() => up('acento', c)} />
+                ))}
+              </div>
+            </>
+          )}
 
           <div className="form-section-title">Serviços / Itens</div>
           {p.servicos.map((s, i) => (
@@ -258,76 +289,164 @@ export default function ModeloProposta({ onBack }: { onBack: () => void }) {
         </div>
       </div>
 
+      {/* MOBILE PREVIEW HANDLE */}
+      <div className="mobile-preview-handle">
+        <div className="preview-handle-bar" />
+        <div className="preview-handle-dots">
+          <span /><span /><span /><span /><span /><span />
+        </div>
+        <div className="preview-handle-label">
+          <span className="preview-handle-chevron">↓</span>
+          Arraste para ver o preview
+          <span className="preview-handle-chevron">↓</span>
+        </div>
+      </div>
+
       {/* PREVIEW */}
       <div className="modelo-preview-panel">
-        <div className="preview-label">Preview ao vivo</div>
+        <div className="preview-label">Preview ao vivo{layoutPb ? ' — Preto & Branco' : ''}</div>
         <div className="doc-sheet">
-          <div className="proposta-header" style={{ background: `linear-gradient(135deg, ${p.acento}, ${p.acento}cc)` }}>
-            <div className="proposta-empresa-nome">{p.empresa || 'Sua Empresa'}</div>
-            <div className="proposta-titulo">Proposta Comercial — Nº {p.numero}</div>
-            <div className="proposta-meta">
-              <div className="proposta-meta-item"><span className="proposta-meta-label">Para</span><span className="proposta-meta-value">{p.clienteEmpresa || '—'}</span></div>
-              <div className="proposta-meta-item"><span className="proposta-meta-label">Data</span><span className="proposta-meta-value">{p.data}</span></div>
-              <div className="proposta-meta-item"><span className="proposta-meta-label">Válido até</span><span className="proposta-meta-value">{p.validadeAte}</span></div>
-            </div>
-          </div>
-
-          <div className="proposta-body">
-            <div className="proposta-section">
-              <div className="proposta-section-title">Apresentação</div>
-              <p className="proposta-intro-text" style={{ whiteSpace: 'pre-wrap' }}>{p.intro}</p>
-            </div>
-
-            <div className="proposta-section">
-              <div className="proposta-section-title">Serviços Propostos</div>
-              <table className="proposta-services-table">
-                <thead>
-                  <tr>
-                    <th>Descrição</th>
-                    <th style={{ textAlign: 'center' }}>Qtd.</th>
-                    <th className="amount-col">Val. Unit.</th>
-                    <th className="amount-col">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {p.servicos.map(s => (
-                    <tr key={s.id}>
-                      <td>{s.descricao || '—'}</td>
-                      <td style={{ textAlign: 'center' }}>{s.quantidade}</td>
-                      <td className="amount-col">{formatCurrency(s.valor)}</td>
-                      <td className="amount-col" style={{ fontWeight: 700 }}>{(parseVal(s.valor) * parseVal(s.quantidade)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              <div className="proposta-total-row">
-                <span className="proposta-total-label">TOTAL GERAL</span>
-                <span className="proposta-total-value" style={{ color: p.acento }}>{totalStr}</span>
+          {layoutPb ? (
+            /* ── Minimalist B&W Preview ── */
+            <>
+              <div style={{ padding: '2rem 2rem 1.2rem', borderBottom: '2px solid #0f172a' }}>
+                <div style={{ fontSize: '1.3rem', fontWeight: 900, color: '#0f172a', letterSpacing: '-0.5px' }}>{p.empresa || 'Sua Empresa'}</div>
+                <div style={{ fontSize: '0.85rem', color: '#475569', marginTop: '0.15rem' }}>Proposta Comercial — Nº {p.numero}</div>
+                <div style={{ display: 'flex', gap: '2rem', marginTop: '0.7rem', fontSize: '0.78rem', color: '#334155' }}>
+                  <span><strong>Para:</strong> {p.clienteEmpresa || '—'}</span>
+                  <span><strong>Data:</strong> {p.data}</span>
+                  <span><strong>Válido até:</strong> {p.validadeAte}</span>
+                </div>
               </div>
-            </div>
 
-            {(p.formaPagamento || p.prazoExecucao) && (
-              <div className="proposta-section">
-                <div className="proposta-section-title">Condições Comerciais</div>
-                {p.formaPagamento && <p className="proposta-terms-text"><strong>Pagamento:</strong> {p.formaPagamento}</p>}
-                {p.prazoExecucao && <p className="proposta-terms-text" style={{ marginTop: '0.5rem' }}><strong>Prazo:</strong> {p.prazoExecucao}</p>}
-                {p.observacoes && <p className="proposta-terms-text" style={{ marginTop: '0.5rem', fontStyle: 'italic' }}>{p.observacoes}</p>}
+              <div className="proposta-body">
+                <div className="proposta-section">
+                  <div className="proposta-section-title" style={{ color: '#334155' }}>Apresentação</div>
+                  <p className="proposta-intro-text" style={{ whiteSpace: 'pre-wrap' }}>{p.intro}</p>
+                </div>
+
+                <div className="proposta-section">
+                  <div className="proposta-section-title" style={{ color: '#334155' }}>Serviços Propostos</div>
+                  <table className="proposta-services-table">
+                    <thead>
+                      <tr>
+                        <th>Descrição</th>
+                        <th style={{ textAlign: 'center' }}>Qtd.</th>
+                        <th className="amount-col">Val. Unit.</th>
+                        <th className="amount-col">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {p.servicos.map(s => (
+                        <tr key={s.id}>
+                          <td>{s.descricao || '—'}</td>
+                          <td style={{ textAlign: 'center' }}>{s.quantidade}</td>
+                          <td className="amount-col">{formatCurrency(s.valor)}</td>
+                          <td className="amount-col" style={{ fontWeight: 700 }}>{(parseVal(s.valor) * parseVal(s.quantidade)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className="proposta-total-row">
+                    <span className="proposta-total-label">TOTAL GERAL</span>
+                    <span className="proposta-total-value" style={{ color: '#0f172a' }}>{totalStr}</span>
+                  </div>
+                </div>
+
+                {(p.formaPagamento || p.prazoExecucao) && (
+                  <div className="proposta-section">
+                    <div className="proposta-section-title" style={{ color: '#334155' }}>Condições Comerciais</div>
+                    {p.formaPagamento && <p className="proposta-terms-text"><strong>Pagamento:</strong> {p.formaPagamento}</p>}
+                    {p.prazoExecucao && <p className="proposta-terms-text" style={{ marginTop: '0.5rem' }}><strong>Prazo:</strong> {p.prazoExecucao}</p>}
+                    {p.observacoes && <p className="proposta-terms-text" style={{ marginTop: '0.5rem', fontStyle: 'italic' }}>{p.observacoes}</p>}
+                  </div>
+                )}
               </div>
-            )}
-          </div>
 
-          <div className="proposta-footer">
-            <div className="proposta-footer-info">
-              <strong>{p.empresa}</strong><br />
-              CNPJ: {p.cnpj}<br />
-              {p.email} | {p.telefone}
-            </div>
-            <div className="proposta-sign-area">
-              <div className="proposta-sign-line" />
-              <div className="proposta-sign-name">{p.responsavel || 'Responsável'}</div>
-              <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{p.empresa}</div>
-            </div>
-          </div>
+              <div className="proposta-footer" style={{ borderTop: '1px solid #cbd5e1' }}>
+                <div className="proposta-footer-info">
+                  <strong>{p.empresa}</strong><br />
+                  CNPJ: {p.cnpj}<br />
+                  {p.email} | {p.telefone}
+                </div>
+                <div className="proposta-sign-area">
+                  <div className="proposta-sign-line" style={{ borderColor: '#0f172a' }} />
+                  <div className="proposta-sign-name">{p.responsavel || 'Responsável'}</div>
+                  <div style={{ fontSize: '0.7rem', color: '#64748b' }}>{p.empresa}</div>
+                </div>
+              </div>
+            </>
+          ) : (
+            /* ── Original Colored Preview ── */
+            <>
+              <div className="proposta-header" style={{ background: `linear-gradient(135deg, ${p.acento}, ${p.acento}cc)` }}>
+                <div className="proposta-empresa-nome">{p.empresa || 'Sua Empresa'}</div>
+                <div className="proposta-titulo">Proposta Comercial — Nº {p.numero}</div>
+                <div className="proposta-meta">
+                  <div className="proposta-meta-item"><span className="proposta-meta-label">Para</span><span className="proposta-meta-value">{p.clienteEmpresa || '—'}</span></div>
+                  <div className="proposta-meta-item"><span className="proposta-meta-label">Data</span><span className="proposta-meta-value">{p.data}</span></div>
+                  <div className="proposta-meta-item"><span className="proposta-meta-label">Válido até</span><span className="proposta-meta-value">{p.validadeAte}</span></div>
+                </div>
+              </div>
+
+              <div className="proposta-body">
+                <div className="proposta-section">
+                  <div className="proposta-section-title">Apresentação</div>
+                  <p className="proposta-intro-text" style={{ whiteSpace: 'pre-wrap' }}>{p.intro}</p>
+                </div>
+
+                <div className="proposta-section">
+                  <div className="proposta-section-title">Serviços Propostos</div>
+                  <table className="proposta-services-table">
+                    <thead>
+                      <tr>
+                        <th>Descrição</th>
+                        <th style={{ textAlign: 'center' }}>Qtd.</th>
+                        <th className="amount-col">Val. Unit.</th>
+                        <th className="amount-col">Total</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {p.servicos.map(s => (
+                        <tr key={s.id}>
+                          <td>{s.descricao || '—'}</td>
+                          <td style={{ textAlign: 'center' }}>{s.quantidade}</td>
+                          <td className="amount-col">{formatCurrency(s.valor)}</td>
+                          <td className="amount-col" style={{ fontWeight: 700 }}>{(parseVal(s.valor) * parseVal(s.quantidade)).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  <div className="proposta-total-row">
+                    <span className="proposta-total-label">TOTAL GERAL</span>
+                    <span className="proposta-total-value" style={{ color: p.acento }}>{totalStr}</span>
+                  </div>
+                </div>
+
+                {(p.formaPagamento || p.prazoExecucao) && (
+                  <div className="proposta-section">
+                    <div className="proposta-section-title">Condições Comerciais</div>
+                    {p.formaPagamento && <p className="proposta-terms-text"><strong>Pagamento:</strong> {p.formaPagamento}</p>}
+                    {p.prazoExecucao && <p className="proposta-terms-text" style={{ marginTop: '0.5rem' }}><strong>Prazo:</strong> {p.prazoExecucao}</p>}
+                    {p.observacoes && <p className="proposta-terms-text" style={{ marginTop: '0.5rem', fontStyle: 'italic' }}>{p.observacoes}</p>}
+                  </div>
+                )}
+              </div>
+
+              <div className="proposta-footer">
+                <div className="proposta-footer-info">
+                  <strong>{p.empresa}</strong><br />
+                  CNPJ: {p.cnpj}<br />
+                  {p.email} | {p.telefone}
+                </div>
+                <div className="proposta-sign-area">
+                  <div className="proposta-sign-line" />
+                  <div className="proposta-sign-name">{p.responsavel || 'Responsável'}</div>
+                  <div style={{ fontSize: '0.7rem', color: '#94a3b8' }}>{p.empresa}</div>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

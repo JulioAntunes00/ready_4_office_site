@@ -222,6 +222,19 @@ export default function ModeloCarta({ onBack }: { onBack: () => void }) {
         </div>
       </div>
 
+      {/* MOBILE PREVIEW HANDLE */}
+      <div className="mobile-preview-handle">
+        <div className="preview-handle-bar" />
+        <div className="preview-handle-dots">
+          <span /><span /><span /><span /><span /><span />
+        </div>
+        <div className="preview-handle-label">
+          <span className="preview-handle-chevron">↓</span>
+          Arraste para ver o preview
+          <span className="preview-handle-chevron">↓</span>
+        </div>
+      </div>
+
       {/* PREVIEW */}
       <div className="modelo-preview-panel">
         <div className="preview-label">Preview ao vivo</div>

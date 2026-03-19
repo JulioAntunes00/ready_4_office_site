@@ -34,14 +34,15 @@ function wrapText(text: string, maxChars: number): string[] {
 // ============ LAYOUTS ============
 
 function LayoutClassico({ cv }: { cv: CvData }) {
-  const getInitials = (n: string) => n.trim().split(' ').map(x => x[0]).slice(0, 2).join('').toUpperCase() || '?';
   return (
     <>
       <div className="cv-header" style={{ background: `linear-gradient(135deg, ${cv.acento}14 0%, ${cv.acento}05 100%)` }}>
         <div className="cv-header-accent" style={{ background: `linear-gradient(90deg, ${cv.acento}, ${cv.acento}99)` }} />
-        <div className="cv-avatar" style={{ background: cv.foto ? 'transparent' : `linear-gradient(135deg, ${cv.acento}, ${cv.acento}cc)`, overflow: 'hidden', border: `3px solid ${cv.acento}` }}>
-          {cv.foto ? <img src={cv.foto} alt="foto" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : getInitials(cv.nome)}
-        </div>
+        {cv.foto && (
+          <div className="cv-avatar" style={{ background: 'transparent', overflow: 'hidden', border: `3px solid ${cv.acento}` }}>
+            <img src={cv.foto} alt="foto" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
+        )}
         <div className="cv-header-info">
           <div className="cv-name">{cv.nome || 'Seu Nome'}</div>
           <div className="cv-role" style={{ color: cv.acento }}>{cv.cargo || 'Cargo / Profissão'}</div>
@@ -112,7 +113,6 @@ function LayoutClassico({ cv }: { cv: CvData }) {
 }
 
 function LayoutModerno({ cv }: { cv: CvData }) {
-  const getInitials = (n: string) => n.trim().split(' ').map(x => x[0]).slice(0, 2).join('').toUpperCase() || '?';
   return (
     <>
       {/* Full-width dark header */}
@@ -120,13 +120,15 @@ function LayoutModerno({ cv }: { cv: CvData }) {
         <div style={{ position: 'absolute', top: -40, right: -40, width: 200, height: 200, borderRadius: '50%', background: 'rgba(255,255,255,0.06)' }} />
         <div style={{ position: 'absolute', bottom: -20, right: 80, width: 120, height: 120, borderRadius: '50%', background: 'rgba(255,255,255,0.04)' }} />
         <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center', position: 'relative', zIndex: 2 }}>
-          <div style={{
-            width: 90, height: 90, borderRadius: '20px', border: '3px solid rgba(255,255,255,0.4)',
-            overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: '1.8rem', fontWeight: 900, color: cv.acento, background: 'white'
-          }}>
-            {cv.foto ? <img src={cv.foto} alt="foto" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : getInitials(cv.nome)}
-          </div>
+          {cv.foto && (
+            <div style={{
+              width: 90, height: 90, borderRadius: '20px', border: '3px solid rgba(255,255,255,0.4)',
+              overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: 'white'
+            }}>
+              <img src={cv.foto} alt="foto" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </div>
+          )}
           <div>
             <div style={{ fontSize: '2rem', fontWeight: 900, color: 'white', letterSpacing: '-1px', lineHeight: 1.1 }}>{cv.nome || 'Seu Nome'}</div>
             <div style={{ fontSize: '1rem', fontWeight: 700, color: 'rgba(255,255,255,0.8)', margin: '0.25rem 0 0.75rem' }}>{cv.cargo || 'Cargo / Profissão'}</div>
@@ -210,20 +212,18 @@ function LayoutModerno({ cv }: { cv: CvData }) {
 }
 
 function LayoutMinimalista({ cv }: { cv: CvData }) {
-  const getInitials = (n: string) => n.trim().split(' ').map(x => x[0]).slice(0, 2).join('').toUpperCase() || '?';
   return (
     <div style={{ padding: '3rem' }}>
       {/* Minimal header */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem', paddingBottom: '1.5rem', borderBottom: `2px solid ${cv.acento}` }}>
         <div style={{ display: 'flex', gap: '1.2rem', alignItems: 'center' }}>
-          {(cv.foto || cv.nome) && (
+          {cv.foto && (
             <div style={{
               width: 70, height: 70, borderRadius: '50%',
               border: `2px solid ${cv.acento}`, overflow: 'hidden', flexShrink: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: `${cv.acento}18`, color: cv.acento, fontSize: '1.4rem', fontWeight: 900
+              display: 'flex', alignItems: 'center', justifyContent: 'center'
             }}>
-              {cv.foto ? <img src={cv.foto} alt="foto" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : getInitials(cv.nome)}
+              <img src={cv.foto} alt="foto" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
           )}
           <div>
@@ -372,18 +372,16 @@ export default function ModeloCurriculo({ onBack }: { onBack: () => void }) {
       page.drawRectangle({ x: 0, y: height - 130, width: 595, height: 130, color: rgb(0.97, 0.98, 1) });
       page.drawRectangle({ x: 0, y: height - 4, width: 595, height: 4, color: accentRgb });
 
-      // Photo or initials
+      // Photo (only if uploaded)
       const photoSize = 72;
       const photoX = 40;
       const photoY = height - 115;
       if (photoImage) {
         page.drawEllipse({ x: photoX + photoSize / 2, y: photoY + photoSize / 2, xScale: photoSize / 2, yScale: photoSize / 2, color: rgb(0.9, 0.9, 0.9) });
         page.drawImage(photoImage, { x: photoX, y: photoY, width: photoSize, height: photoSize });
-      } else {
-        page.drawEllipse({ x: photoX + photoSize / 2, y: photoY + photoSize / 2, xScale: photoSize / 2, yScale: photoSize / 2, color: accentRgb });
       }
 
-      const textX = photoImage || true ? photoX + photoSize + 16 : photoX;
+      const textX = photoImage ? photoX + photoSize + 16 : photoX;
       page.drawText(cv.nome || 'Seu Nome', { x: textX, y: height - 55, size: 20, font: bold, color: dark });
       page.drawText(cv.cargo || '', { x: textX, y: height - 74, size: 11, font: regular, color: accentRgb });
       const contacts = [cv.email, cv.telefone, cv.cidade].filter(Boolean);
@@ -582,6 +580,19 @@ export default function ModeloCurriculo({ onBack }: { onBack: () => void }) {
             </div>
           ))}
           <button className="add-item-btn" onClick={() => updateCv('idiomas', [...cv.idiomas, { id: uid(), nome: '', nivel: 'Intermediário' }])}><Plus size={14} /> Adicionar Idioma</button>
+        </div>
+      </div>
+
+      {/* MOBILE PREVIEW HANDLE */}
+      <div className="mobile-preview-handle">
+        <div className="preview-handle-bar" />
+        <div className="preview-handle-dots">
+          <span /><span /><span /><span /><span /><span />
+        </div>
+        <div className="preview-handle-label">
+          <span className="preview-handle-chevron">↓</span>
+          Arraste para ver o preview
+          <span className="preview-handle-chevron">↓</span>
         </div>
       </div>
 
