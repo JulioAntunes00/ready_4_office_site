@@ -1025,3 +1025,231 @@
     gap: 1.5rem;
   }
 }
+
+/* =============================================
+   5-MODEL GRID
+   ============================================= */
+.modelos-grid-5 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  max-width: 960px;
+  margin: 0 auto 3rem;
+}
+
+@media (min-width: 1024px) {
+  .modelos-grid-5 {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+.modelo-card-new {
+  border-color: transparent;
+  background: linear-gradient(var(--surface), var(--surface)) padding-box,
+    linear-gradient(135deg, #f59e0b44, #e11d4844) border-box;
+}
+
+.modelo-new-ribbon {
+  position: absolute;
+  top: 12px;
+  right: -5px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  font-size: 0.62rem;
+  font-weight: 900;
+  padding: 0.2rem 0.6rem;
+  border-radius: 100px 0 0 100px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+}
+
+/* =============================================
+   LAYOUT PICKER
+   ============================================= */
+.layout-picker {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.layout-option {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.6rem 0.5rem;
+  border-radius: 10px;
+  border: 1.5px solid var(--border);
+  background: var(--surface-2);
+  cursor: pointer;
+  transition: 0.2s;
+  font-family: inherit;
+  color: var(--text-secondary);
+}
+
+.layout-option:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.layout-name {
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.layout-desc {
+  font-size: 0.6rem;
+  font-weight: 600;
+  opacity: 0.7;
+}
+
+/* =============================================
+   PHOTO UPLOAD
+   ============================================= */
+.photo-upload-area {
+  border: 2px dashed var(--border);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: 0.2s;
+  overflow: hidden;
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-upload-area:hover {
+  border-color: var(--primary);
+  background: rgba(225, 29, 72, 0.03);
+}
+
+.photo-upload-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 1rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.photo-preview-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+}
+
+.photo-preview-img {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--border);
+}
+
+.photo-remove-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ef4444;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  transition: 0.15s;
+}
+
+.photo-remove-btn:hover { background: #dc2626; transform: scale(1.1); }
+
+/* =============================================
+   CONTRATO PREVIEW STYLES
+   ============================================= */
+.contrato-section-title {
+  font-size: 0.65rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding-bottom: 0.35rem;
+  border-bottom: 2px solid currentColor;
+  margin-bottom: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.contrato-party-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.contrato-party-box {
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0.85rem;
+  background: #fafafa;
+}
+
+.contrato-party-label {
+  font-size: 0.6rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #94a3b8;
+  margin-bottom: 0.3rem;
+}
+
+.contrato-party-name {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 0.25rem;
+}
+
+.contrato-party-info {
+  font-size: 0.72rem;
+  color: #64748b;
+  line-height: 1.5;
+}
+
+.contrato-clause-text {
+  font-size: 0.82rem;
+  color: #475569;
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+}
+
+/* =============================================
+   RESPONSIVE UPDATES FOR NEW FEATURES
+   ============================================= */
+@media (max-width: 768px) {
+  .modelos-grid-5 {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .layout-picker {
+    flex-direction: column;
+  }
+
+  .contrato-party-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .modelos-grid-5 {
+    grid-template-columns: 1fr;
+  }
+}
