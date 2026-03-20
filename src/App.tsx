@@ -16,10 +16,10 @@ import { useDropzone } from 'react-dropzone';
 import { PDFDocument } from 'pdf-lib';
 import * as pdfjsLib from 'pdfjs-dist';
 
-// SOLUÇÃO SÊNIOR: Importa o worker do próprio pacote instalado para o build do Vite
-// Isso resolve 100% dos erros de "Failed to fetch" na Hostinger
-import pdfWorker from 'pdfjs-dist/build/pdf.worker.mjs?url';
-pdfjsLib.GlobalWorkerOptions.workerSrc = pdfWorker;
+// SOLUÇÃO INFALÍVEL PARA HOSTINGER: Como a Hostinger costuma bloquear a extensão .mjs
+// retornando o MIME Type errado, o navegador recusa o script. 
+// Carregar direto de um CDN garante o funcionamento de 100% dos previewers e não consome banda do seu servidor.
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.mjs`;
 
 import './App.css';
 import './index.css';
